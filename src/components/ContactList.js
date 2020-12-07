@@ -1,16 +1,36 @@
 import React from 'react';
-import shortid from 'shortid';
+import PropTypes from 'prop-types';
 
-export default function contactList({ contactList }) {
+import s from './PhoneBock.module.css';
+
+export default function СontactList({ contactList, onDeleted }) {
   return (
     <ul className={'js-list'}>
-      {contactList.map(({ name, number }) => {
+      {contactList.map(({ id, name, number }) => {
         return (
-          <li key={shortid.generate()}>
+          <li key={id}>
             {name}: {number}
+            <button
+              className={s.btnList}
+              type="button"
+              onClick={() => onDeleted(id)}
+            >
+              Видалити
+            </button>
           </li>
         );
       })}
     </ul>
   );
 }
+
+СontactList.propTypes = {
+  contactList: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+    }),
+  ),
+  onDeleted: PropTypes.func.isRequired,
+};

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import shortid from 'shortid';
+import s from './PhoneBock.module.css';
 
 export default class Form extends Component {
   state = {
@@ -9,14 +11,23 @@ export default class Form extends Component {
   InputValues = e => {
     const { name, value } = e.currentTarget;
     this.setState({ [name]: value });
-    // console.log(value);
   };
 
   addContact = e => {
     e.preventDefault();
-    this.onAlert();
 
-    this.props.onSubmit({ name: this.state.name, number: this.state.number });
+    const checkName = this.props.contactList({ name: this.state.name });
+    if (checkName) {
+      alert('Це ім"я вже існує');
+
+      return;
+    }
+
+    this.props.onSubmit({
+      id: shortid.generate(),
+      name: this.state.name,
+      number: this.state.number,
+    });
     this.resetInputValues();
   };
 
@@ -24,35 +35,38 @@ export default class Form extends Component {
     this.setState({ name: '', number: '' });
   };
 
-  onAlert = () => {
-    this.props.contactList({ name: this.state.name });
-  };
-
   render() {
+    const idName = shortid.generate();
+    const idNumber = shortid.generate();
     //   const  = onAlert;
     return (
-      <form onSubmit={this.addContact}>
-        <label>
+      <form className={s.form} onSubmit={this.addContact}>
+        <label htmlFor={idName} className={s.labelName}>
           Им'я
-          <input
-            type="text"
-            name="name"
-            value={this.state.name}
-            onChange={this.InputValues}
-            autoComplete="off"
-          ></input>
         </label>
-        <label>
+        <input
+          id={idName}
+          type="text"
+          name="name"
+          value={this.state.name}
+          onChange={this.InputValues}
+          autoComplete="off"
+        ></input>
+        <label htmlFor={idNumber} className={s.labelNumber}>
           Номер
-          <input
-            type="text"
-            name="number"
-            value={this.state.number}
-            onChange={this.InputValues}
-            autoComplete="off"
-          ></input>
         </label>
-        <button type="submite">Додати контакт</button>
+        <input
+          id={idNumber}
+          type="tel"
+          pattern="^[ 0-9]+$"
+          name="number"
+          value={this.state.number}
+          onChange={this.InputValues}
+          autoComplete="off"
+        ></input>
+        <button className={s.btnForm} type="submite">
+          Додати контакт
+        </button>
       </form>
     );
   }
